@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Supplied Color Palette */
+  --color-arctic-powder: #F1F6F4;
+  --color-forsythia: #FFC801;
+  
+  /* TODO: Insert remaining 4 colors from provided palette image */
+  --color-3: #TODO;
+  --color-4: #TODO;
+  --color-5: #TODO;
+  --color-6: #TODO;
+
+  /* Typography */
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+
+  /* Motion Constraints */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-micro: 175ms; /* 150ms – 200ms */
+  --duration-structural: 350ms; /* 300ms – 400ms */
+  --orchestration-max: 500ms;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: var(--font-sans);
+  background-color: var(--color-arctic-powder);
+  color: #000000; /* Inferred from SVGs */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-mono);
+}
+
+/* Hardware Acceleration Defaults */
+@media (prefers-reduced-motion: no-preference) {
+  .will-animate {
+    will-change: transform, opacity;
+  }
+}
