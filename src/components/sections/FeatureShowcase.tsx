@@ -1,70 +1,131 @@
 'use client';
 
-import React from 'react';
-import { useBentoAccordionContextLock } from '@/hooks/useContextLock';
-import Icon from '@/components/ui/Icon';
+import React, { useEffect, useRef } from 'react';
+import BentoAccordionWrapper from '@/components/features/bento/BentoAccordionWrapper';
+import type { FeatureItem } from '@/components/features/bento/BentoAccordionWrapper';
 
-// TODO: Replace with actual feature mapping when provided
-const features = [
-  { id: 'f1', icon: 'chart-pie' as const, title: 'TODO_FEATURE_1', copy: 'TODO_COPY_1' },
-  { id: 'f2', icon: 'arrow-trending-up' as const, title: 'TODO_FEATURE_2', copy: 'TODO_COPY_2' },
-  { id: 'f3', icon: 'cog-6-tooth' as const, title: 'TODO_FEATURE_3', copy: 'TODO_COPY_3' },
-  { id: 'f4', icon: 'link' as const, title: 'TODO_FEATURE_4', copy: 'TODO_COPY_4' },
+/*
+ * TODO: Replace all [TODO] placeholder values with the actual provided
+ * feature headings, copy, and icon assignments once available.
+ *
+ * Icon names must map to a key in src/components/ui/Icon.tsx.
+ * Valid names from the supplied asset pack:
+ *   'chart-pie' | 'arrow-trending-up' | 'cog-8-tooth' | 'link' |
+ *   'arrow-path' | 'cube-16-solid' | 'search' | 'link-solid' | etc.
+ */
+const SECTION_HEADING = '[TODO: Features Section Heading]';
+const SECTION_COPY    = '[TODO: Features Section Sub-heading / Copy]';
+
+const features: FeatureItem[] = [
+  {
+    id: 'f1',
+    icon: 'chart-pie',         // [TODO: Confirm icon assignment]
+    title: '[TODO: Feature 1 Title]',
+    copy:  '[TODO: Feature 1 Description Copy]',
+  },
+  {
+    id: 'f2',
+    icon: 'arrow-trending-up', // [TODO: Confirm icon assignment]
+    title: '[TODO: Feature 2 Title]',
+    copy:  '[TODO: Feature 2 Description Copy]',
+  },
+  {
+    id: 'f3',
+    icon: 'cog-8-tooth',       // [TODO: Confirm icon assignment]
+    title: '[TODO: Feature 3 Title]',
+    copy:  '[TODO: Feature 3 Description Copy]',
+  },
+  {
+    id: 'f4',
+    icon: 'link',              // [TODO: Confirm icon assignment]
+    title: '[TODO: Feature 4 Title]',
+    copy:  '[TODO: Feature 4 Description Copy]',
+  },
 ];
 
+/**
+ * FeatureShowcase — Feature 2 orchestrating section
+ *
+ * Delegates all Bento/Accordion rendering and context-lock logic
+ * to BentoAccordionWrapper, keeping this component a clean layout
+ * shell focused only on section structure.
+ *
+ * Scroll-reveal:
+ *   Uses IntersectionObserver to apply .sr-visible when the section
+ *   enters the viewport. Content remains fully visible without JS
+ *   (no .sr-hidden is applied unless JS runs).
+ */
 const FeatureShowcase: React.FC = () => {
-  const { activeIndex, isMobile, handleDesktopHover, handleMobileToggle } = 
-    useBentoAccordionContextLock(768);
+  const sectionRef  = useRef<HTMLElement>(null);
+  const headingRef  = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReduced) return;
+
+    const heading = headingRef.current;
+    if (!heading) return;
+
+    /* Apply hidden state right before observer starts watching */
+    heading.classList.add('sr-hidden');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('sr-hidden');
+            entry.target.classList.add('sr-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' },
+    );
+
+    observer.observe(heading);
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="features" aria-labelledby="features-heading">
-      <div className="container mx-auto px-6 py-24">
-        <h2 id="features-heading" className="text-3xl md:text-4xl font-bold mb-12">
-          TODO_FEATURES_HEADING
-        </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {features.map((feature, index) => (
-            <div
-              key={feature.id}
-              className={`border border-black/10 rounded-xl p-6 bg-white cursor-pointer 
-                transition-all duration-[350ms] ease-in-out
-                ${activeIndex === index ? 'md:col-span-2 shadow-lg' : 'hover:shadow-md'}`}
-              onMouseEnter={() => !isMobile && handleDesktopHover(index)}
-              onMouseLeave={() => !isMobile && handleDesktopHover(null)}
-              onClick={() => isMobile && handleMobileToggle(index)}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 flex items-center justify-center bg-[var(--color-forsythia)] rounded-full">
-                  <Icon name={feature.icon} className="w-5 h-5" />
-                </div>
-                {isMobile && (
-                  <Icon 
-                    name={activeIndex === index ? 'chevron-up' : 'chevron-down'} 
-                    className="w-5 h-5 transition-transform duration-[175ms] ease-out"
-                  />
-                )}
-              </div>
-              
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              
-              {/* Fluid height transition for mobile accordion */}
-              <div 
-                className={`grid transition-all duration-[350ms] ease-in-out
-                  ${isMobile 
-                    ? activeIndex === index 
-                      ? 'grid-rows-[1fr] opacity-100' 
-                      : 'grid-rows-[0fr] opacity-0'
-                    : 'grid-rows-[1fr] opacity-100'
-                  }`}
-              >
-                <div className="overflow-hidden">
-                  <p className="text-gray-600">{feature.copy}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+    <section
+      id="features"
+      ref={sectionRef}
+      aria-labelledby="features-heading"
+      className={[
+        'py-24 md:py-32',
+        'bg-[var(--color-arctic-powder)]',
+      ].join(' ')}
+    >
+      <div className="section-container">
+
+        {/* ── Section header ── */}
+        <div
+          ref={headingRef}
+          className="max-w-2xl mb-12 md:mb-16"
+        >
+          <h2
+            id="features-heading"
+            className="font-mono font-bold text-[var(--color-text-primary)] mb-4"
+          >
+            {SECTION_HEADING}
+          </h2>
+          <p className="font-sans text-base text-[var(--color-text-secondary)] leading-relaxed">
+            {SECTION_COPY}
+          </p>
         </div>
+
+        {/*
+         * BentoAccordionWrapper handles:
+         *   - Desktop: BentoGrid → BentoNode cards
+         *   - Mobile:  AccordionList → AccordionItem panels
+         *   - Context lock: activeIndex preserved across breakpoint transition
+         */}
+        <BentoAccordionWrapper features={features} columns={3} />
+
       </div>
     </section>
   );

@@ -2,50 +2,404 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────
+   COLOR PALETTE — MP025 (Alex Cristache)
+   All six supplied colors as CSS custom props.
+───────────────────────────────────────────── */
 :root {
-  /* Supplied Color Palette */
-  --color-arctic-powder: #F1F6F4;
-  --color-forsythia: #FFC801;
-  
-  /* TODO: Insert remaining 4 colors from provided palette image */
-  --color-3: #TODO;
-  --color-4: #TODO;
-  --color-5: #TODO;
-  --color-6: #TODO;
+  --color-arctic-powder:        #F1F6F4;
+  --color-mystic-mint:          #D9E8E2;
+  --color-forsythia:            #FFC801;
+  --color-deep-saffron:         #FF9932;
+  --color-nocturnal-expedition: #114C5A;
+  --color-oceanic-noir:         #172836;
 
-  /* Typography */
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-sans: 'Inter', sans-serif;
+  /* ── Semantic Aliases ── */
+  --color-bg:           var(--color-arctic-powder);
+  --color-surface:      #ffffff;
+  --color-surface-alt:  var(--color-mystic-mint);
+  --color-accent:       var(--color-forsythia);
+  --color-accent-warm:  var(--color-deep-saffron);
+  --color-brand:        var(--color-nocturnal-expedition);
+  --color-brand-deep:   var(--color-oceanic-noir);
 
-  /* Motion Constraints */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --duration-micro: 175ms; /* 150ms – 200ms */
-  --duration-structural: 350ms; /* 300ms – 400ms */
-  --orchestration-max: 500ms;
+  --color-text-primary:   var(--color-oceanic-noir);
+  --color-text-secondary: var(--color-nocturnal-expedition);
+  --color-text-muted:     #5a7a87;
+  --color-text-on-dark:   var(--color-arctic-powder);
+
+  --color-border:          rgba(23, 40, 54, 0.10);
+  --color-border-hover:    rgba(17, 76, 90, 0.30);
+  --color-border-accent:   var(--color-forsythia);
+
+  /* ── Typography ── */
+  --font-mono: var(--font-mono, 'JetBrains Mono', monospace);
+  --font-sans: var(--font-sans, 'Inter', sans-serif);
+
+  /* ── Spacing Scale ── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* ── Border Radius ── */
+  --radius-sm:   0.375rem;
+  --radius-md:   0.75rem;
+  --radius-lg:   1rem;
+  --radius-xl:   1.5rem;
+  --radius-full: 9999px;
+
+  /* ── Shadow Scale ── */
+  --shadow-xs: 0 1px 2px rgba(23, 40, 54, 0.04);
+  --shadow-sm: 0 2px 6px rgba(23, 40, 54, 0.06), 0 1px 2px rgba(23, 40, 54, 0.04);
+  --shadow-md: 0 4px 16px rgba(23, 40, 54, 0.08), 0 2px 6px rgba(23, 40, 54, 0.05);
+  --shadow-lg: 0 8px 32px rgba(23, 40, 54, 0.12), 0 4px 12px rgba(23, 40, 54, 0.06);
+  --shadow-xl: 0 16px 48px rgba(23, 40, 54, 0.16), 0 8px 24px rgba(23, 40, 54, 0.08);
+  --shadow-accent: 0 4px 20px rgba(255, 200, 1, 0.30);
+
+  /* ── Motion Tokens ── */
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-standard:  cubic-bezier(0.4, 0, 0.2, 1);
+
+  --duration-micro:      175ms;   /* 150ms – 200ms micro-interactions */
+  --duration-structural: 350ms;   /* 300ms – 400ms layout transitions  */
+  --orchestration-max:   500ms;   /* Competition hard cap               */
 }
 
-* {
+/* ─────────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
-  font-family: var(--font-sans);
-  background-color: var(--color-arctic-powder);
-  color: #000000; /* Inferred from SVGs */
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.6;
+}
+
+/* ── Typography Hierarchy ── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-mono);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
 }
 
-/* Hardware Acceleration Defaults */
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; }
+h2 { font-size: clamp(1.5rem, 3.5vw, 2.5rem); font-weight: 700; }
+h3 { font-size: clamp(1.125rem, 2vw, 1.5rem); font-weight: 600; }
+h4 { font-size: 1.125rem; font-weight: 600; }
+
+p {
+  font-family: var(--font-sans);
+  line-height: 1.7;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-sans);
+}
+
+/* ── Focus Visible ── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─────────────────────────────────────────────
+   HARDWARE ACCELERATION
+───────────────────────────────────────────── */
 @media (prefers-reduced-motion: no-preference) {
   .will-animate {
     will-change: transform, opacity;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   ENTRY ANIMATION KEYFRAMES
+   Only transform + opacity — hardware-accelerated,
+   no layout-triggering properties.
+───────────────────────────────────────────── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: var(--color-border); }
+  50%       { border-color: var(--color-border-hover); }
+}
+
+/* ─────────────────────────────────────────────
+   SCROLL-REVEAL SYSTEM
+   Content is FULLY VISIBLE by default in plain CSS.
+   JS applies .sr-hidden to elements before the
+   IntersectionObserver begins tracking. This means
+   content is always accessible without JS.
+───────────────────────────────────────────── */
+
+/* Default: visible — ensures graceful no-JS degradation */
+.sr-item {
+  /* No hidden state here — JS will add .sr-hidden */
+}
+
+/* JS applies this class BEFORE observer initialises */
+.sr-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* JS adds this once element enters viewport */
+.sr-visible {
+  transition:
+    opacity var(--duration-structural) var(--ease-out),
+    transform var(--duration-structural) var(--ease-out);
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delay variants for grouped elements */
+.sr-delay-1 { transition-delay: 50ms; }
+.sr-delay-2 { transition-delay: 100ms; }
+.sr-delay-3 { transition-delay: 150ms; }
+.sr-delay-4 { transition-delay: 200ms; }
+
+/* ─────────────────────────────────────────────
+   SECTION LAYOUT PRIMITIVES
+───────────────────────────────────────────── */
+.section-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-inline: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .section-container {
+    padding-inline: var(--space-8);
+  }
+}
+
+@media (min-width: 1280px) {
+  .section-container {
+    padding-inline: var(--space-12);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   BUTTON PRIMITIVES
+───────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  transition:
+    transform var(--duration-micro) var(--ease-out),
+    box-shadow var(--duration-micro) var(--ease-out),
+    background-color var(--duration-micro) var(--ease-out),
+    border-color var(--duration-micro) var(--ease-out),
+    color var(--duration-micro) var(--ease-out);
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(0) !important;
+}
+
+.btn-primary {
+  background-color: var(--color-brand);
+  color: var(--color-text-on-dark);
+  border: 1.5px solid var(--color-brand);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-nocturnal-expedition);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-accent {
+  background-color: var(--color-accent);
+  color: var(--color-brand-deep);
+  border: 1.5px solid var(--color-accent);
+}
+
+.btn-accent:hover {
+  background-color: var(--color-deep-saffron);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-accent);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-brand);
+  border: 1.5px solid var(--color-border-hover);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-brand);
+  background-color: rgba(17, 76, 90, 0.04);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ─────────────────────────────────────────────
+   CARD PRIMITIVES
+───────────────────────────────────────────── */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  transition:
+    transform var(--duration-micro) var(--ease-out),
+    box-shadow var(--duration-micro) var(--ease-out),
+    border-color var(--duration-micro) var(--ease-out);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border-hover);
+}
+
+/* ─────────────────────────────────────────────
+   ICON WRAPPER
+───────────────────────────────────────────── */
+.icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.icon-wrap img {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* ─────────────────────────────────────────────
+   BADGE / PILL
+───────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.3125rem 0.875rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.badge-accent {
+  background-color: rgba(255, 200, 1, 0.15);
+  color: var(--color-nocturnal-expedition);
+  border: 1px solid rgba(255, 200, 1, 0.35);
+}
+
+.badge-surface {
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+/* ─────────────────────────────────────────────
+   REDUCED MOTION — OVERRIDE ALL ANIMATIONS
+───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .sr-hidden {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .sr-visible {
+    transition: none !important;
+  }
+
+  .btn:hover {
+    transform: none !important;
+  }
+
+  .card:hover {
+    transform: none !important;
   }
 }
